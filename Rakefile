@@ -1,48 +1,36 @@
-require 'rubygems'
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('Gemfile', __dir__)
+require 'bundler/setup' # Set up gems listed in the Gemfile.
+
+# ------------------------------------------------------------
+# Application code
+
+File.expand_path('lib', __dir__).tap do |lib|
+  $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 end
-require 'rake'
-require 'rspec'
+
+# ------------------------------------------------------------
+# RSpec
+
 require 'rspec/core/rake_task'
+require 'ci/reporter/rake/rspec'
 
-RSpec::Core::RakeTask.new() do |t|
-  t.pattern = "./spec/*_spec.rb" # don't need this, it's default.
-  t.rcov = true
-  t.rcov_opts = ['--exclude', 'spec', '--exclude', 'gems']
-end
+ENV['CI_REPORTS'] ||= File.expand_path('artifacts', __dir__)
 
-desc "Generate code coverage"
-RSpec::Core::RakeTask.new(:rcov) do |t|
-  t.pattern = "./spec/**/*_spec.rb" # don't need this, it's default.
-  t.rcov = true
-  t.rcov_opts = ['--exclude', 'spec', '--exclude', 'gems']
-end
-
-task :default => :rcov
-task :hudson => [:rcov, :doc]
-
-# Use yard to build docs
-begin
-  require 'yard'
-  require 'yard/rake/yardoc_task'
-  project_root = File.expand_path(File.dirname(__FILE__))
-  doc_destination = File.join(project_root, 'doc')
-
-  YARD::Rake::YardocTask.new(:doc) do |yt|
-    yt.files   = Dir.glob(File.join(project_root, 'lib', '**', '*.rb')) + 
-                 [ File.join(project_root, 'README.textile') ]
-    yt.options = ['--output-dir', doc_destination, '--readme', 'README.rdoc']
-  end
-rescue LoadError
-  desc "Generate YARD Documentation"
-  task :doc do
-    abort "Please install the YARD gem to generate rdoc."
+namespace :spec do
+  desc 'Run all tests'
+  RSpec::Core::RakeTask.new(:all) do |task|
+    task.rspec_opts = %w[--color --format documentation --order default]
+    task.pattern = 'spec/**/*_spec.rb'
   end
 end
 
+desc 'Run all tests'
+task spec: ['spec:all']
+
+# ------------------------------------------------------------
+# Custom tasks
+
+desc 'Run tests, check test coverage, check code style'
+task default: %i[coverage rubocop bundle:audit]
+
+# TODO: YARD

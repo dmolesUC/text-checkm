@@ -1,0 +1,468 @@
+---------------------------------------------------------------------------
+
+NOTE: This is an unofficial copy of the Checkm 0.7 specification,
+adapted from a diff between the 0.3 and 0.7 specifications captured by
+the Internet Archive's Wayback Machine on 23 October 2015 and retrieved
+on 22 July 2020. It is provided here for reference only, and should not
+be considered normative. (D. Moles, 2020-07-22)
+
+---------------------------------------------------------------------------
+
+Repository Working Group                                        J. Kunze
+                                                               S. Abrams
+                                                                  D. Loy
+                                              California Digital Library
+                                                        
+                                                           June 11, 2010
+
+            Checkm: a checksum-based manifest format (v0.7)
+            
+
+Abstract
+
+   Checkm is a general-purpose text-based file manifest format. Each
+   line of a Checkm manifest is a set of '|'-separated tokens, the first
+   of which identifies the corresponding digital content by filename or
+   URL. Other tokens identify digest algorithm, checksum, content
+   length, and modification time. Tokens may be left unspecified with
+   empty fields or by ending the line early, the degenerate case being a
+   simple file list. It is up to tools that use the Checkm format to
+   specify any further restrictions on tokens (e.g., allowed defaults
+   and digest algorithms) and on overall manifest completeness and
+   coherence. A structured comment mechanism permits a way to document
+   extensions and restrictions. Checkm is designed to support tools that
+   verify the bit-level integrity of groups of files in support of such
+   things as content fixity, replication, import, and export. A manifest
+   may be single-level or multi-level (hierarchical), the latter being
+   useful, for example, in harvesting material from very large web sites
+   (cf. sitemaps).
+
+
+1.  Checkm overview
+
+   Checkm (pronounced "check 'em") is a simple text-based manifest
+   format for digital content. A manifest is a set of lines, each of
+   which describes a unit of content via up to six whitespace-separated
+   tokens. The meaning of a token is given by its position within the
+   line. For example, the first three tokens give the name of the
+   content, a checksum algorithm, and a digest (checksum) computed using
+   that algorithm, respectively. Here's a manifest identifying two files
+   with MD5 checksums (not recommended for serious use but short enough
+   to fit in these examples).
+
+   #%checkm_0.7
+   # My first manifest.  Two files total.
+   # Filename        |Algorithm|  Digest
+   book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9
+   images/r862.png   |   md5   |  408ad21d50cef31da4df6d9ed81b01a7
+
+   Checkm is purely concerned with format and not with such things as
+   completeness and fitness for a given application. It defines the
+   meanings of the six tokens but does not mandate their use. For
+   example, a file package transfer tool could require use of four
+   tokens, but another tool designed for fixity checking might only
+   require two tokens. The next example is a bare-bones manifest in
+   which all but the first token have been dropped, in other words, it's
+   just a list of filenames or URLs, one per line. This is a useful
+   degenerate case when only a list of named units of content is needed.
+
+   #%checkm_0.7
+   # My second manifest.  Just a list of files.
+   # Filename          (no other tokens given)
+   http://example.org/i/chap9.xml
+   http://example.org/i/chap9fig2.png
+
+   To leave tokens unspecified that would occur in the middle rather
+   than at the end of a line, leave the corresponding fields empty. A
+   field is considered empty if the line terminates before it is reached
+   or if it consists only of linear whitespace, namely, zero or more
+   SPACE (hex 20) or TAB (hex 09) characters. For example, a package
+   transfer application that also renames files might use the following
+   manifest.
+
+   #%checkm_0.7
+   # My third manifest.
+   # Filename and Target specified, not Alg, Digest, Length, or ModTime
+   http://example.org/i/chap9.xml     |||||    book/Chapter9.xml
+   http://example.org/i/chap9fig2.png |||||    images/r862.png
+   
+
+   Each non-comment line can contain up to six tokens, and has the form,
+
+   [@]SourceFileOrURL | Alg | Digest | Length | ModTime | TargetFileOrURL
+
+   where "[@]" indicates an optional '@' that causes the identified
+   content to be "included" as a manifest extension. In principle there
+   is no upper or lower limit on the number of lines in a Checkm
+   manifest, however, practical considerations may call for extending a
+   single-level manifest to a multi-level manifest.
+
+
+2.  Multi-level manifests
+
+   If supported, a multi-level manifest permits one large manifest to be
+   spread over a number of smaller manifests. To trigger this, the
+   SourceFileOrURL token that begins a line is preceded by a literal
+   '@'. It invokes a simple inclusion mechanism indicating that the
+   identified content is also in Checkm format and extends the current
+   manifest; this is similar to mainstream sitemap extension mechanisms
+   (cf. [SITEMAPS]). A tool can be said to support only single-level
+   Checkm if it does not support multi-level manifests.
+
+   Included manifests may themselves recursively include other
+   manifests. There is no limit either to the number of inclusions or to
+   the depth of a multi-level manifest. Cycles in the inclusion graph
+   are generally considered to be in poor taste.
+
+
+3.  Checkm lines and tokens
+
+   Manifest lines end with either LF (hex 0a) or CRLF (hex 0d0a). Blank
+   lines are ignored. Lines that begin with '#' are considered
+   "comments" that are to be ignored by processors except for those
+   implementing Checkm extensions (described later).
+
+   Checkm tokens on a given line all relate to the unit of content or to
+   the extended functionality identified by the first token on the line.
+   A unit of content is a contiguous sequence of octets (for most
+   purposes this is a "file") identified by a filename or URL.
+
+   Tokens consist of UTF-8 characters [RFC3629] separated by a '|'
+   character (hex 7c). Any linear whitespace found at the start or end
+   of a token is ignored. Any characters not allowed in a token or in a
+   URL, such as '|' or whitespace, may be represented using URL percent-
+   encoding [RFC3986].
+
+   Tokens may be left unspecified by simply dropping them from the end
+   of the line or by leaving the field empty (zero or more linear
+   whitespace characters). Checkm is silent about which tokens are
+   required or prohibited and what defaults may be in effect. Checkm is
+   also silent about manifest completeness (which units of content must
+   be included) and hyper-specification (whether one unit of content can
+   or must have more than one line describing it, e.g., resulting from
+   two digest algorithms).
+
+
+4.  Content lines
+
+   The first of up to six tokens on a non-comment line look like this
+
+  [@]SourceFileOrURL | Alg | Digest | Length | ModTime | TargetFileOrURL
+  TOKEN NUMBER:    1    2       3       4        5                6
+
+   The token's numbered position determines its meaning, as explained in
+   the correspondingly numbered subsections below.
+
+   Any extra fields at positions 7 and higher are considered to be Checkm
+   extensions.
+
+4.1.  [@]SourceFileOrURL: content identifier
+
+   The SourceFileOrURL token identifies digital content, and may be
+   given as '-' to indicate that the content may be found on the
+   equivalent of Unix "stdin". This token may be a URL or a relative or
+   absolute filename. To prevent interpretation of a relative pathname
+   that begins with '#' or '@', one can insert "./" in front of the
+   name. Whether this token is a filename or a URL, any characters not
+   allowed in a URL must be represented using URL percent-encoding
+   [RFC3986].
+
+   If any SourceFileOrURL token in a manifest is preceded by the
+   optional '@', the line amounts to an "include" statement and the
+   manifest is considered to be "multi-level". Other tokens on that line
+   still relate to the content but the "included" content itself is
+   considered to be an extension of the current manifest. For example, a
+   multi-level Checkm manifest totaling 4 million lines could be
+   represented by a 2000-line manifest, each line of which references a
+   2000-line single-level manifest.
+
+   If none of the lines in a manifest is preceded by '@', the manifest
+   is considered to be "single-level". It is permissible for a tool that
+   conforms to Checkm to declare support for only single-level
+   manifests.
+
+4.2.  Alg: algorithm
+
+   Alg is either the literal string "dir" (designating a directory), a
+   string specifying a cryptographic checksum algorithm, or empty to
+   leave it unspecified. The special case of "dir" is useful for listing
+   an empty directory, which has neither a fixed octetstream over which
+   to compute a digest nor a contained filename to imply the directory's
+   existence. For example,
+
+
+   #%checkm_0.7
+   # My fourth manifest.  Two files and a directory.
+   # Filename                 |Algorithm|  Digest
+   book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9
+   icons/            |   dir
+   images/r862.png   |   md5   |  408ad21d50cef31da4df6d9ed81b01a7
+
+   Implementors of tools that use Checkm are strongly encouraged to
+   support at least two widely implemented checksum algorithms:
+
+      "md5" [RFC1321]
+
+      "sha1" [RFC3174]
+
+      "sha256" [FIPS180-2]
+
+   When using other algorithms, the name of the algorithm should be
+   normalized for use in the manifest's filename, by lowercasing the
+   common name of the algorithm, and removing all non-alphanumeric
+   characters.
+
+4.3.  Digest: computed checksum
+
+   Digest is a string representing the checksum calculated according to
+   the Alg algorithm over the content, or empty to leave it unspecified.
+
+
+4.4.  Length of content
+
+   Length is the number (base 10) of octets in the identified content,
+   or  empty to leave it unspecified.  It is typically useful in
+   providing a rapid test for altered content and for estimating file
+   transfer times.
+
+
+4.5.  ModTime: time last modified
+
+   ModTime is a lexically sort-friendly date such as [TEMPER]
+   ('YYYYMMDDhhmmss') or [W3CDTF] (YYYY-MM-DDThh:mm:ss), or empty to
+   leave it unspecified. It should represent the UTC time when the
+   content was last modified and is typically useful in incremental or
+   priority harvesting of content (cf. [OAI] and [SITEMAPS]).
+
+
+4.6.  TargetFileOrURL: other location
+
+   TargetFileOrURL is a secondary location for the content that
+   applications would use as necessary. For instance, a transfer tool
+   that also renames files could use this token as the destination name.
+
+
+5.  Extensions: structured comment lines
+
+   Comment lines that begin with a token of the form '#%_symbol_' are
+   special structured comment lines that usually indicate specific
+   optional functionality that extends the core Checkm specification.
+   Matching against a _symbol_ is case-insensitive (e.g., #%foo is
+   equivalent to #%FOO). The rest of a structured comment line is
+   tokenized in the same way as non-comment lines. The structured
+   comment symbols that follow are currently reserved.
+
+5.1.  Optional extension: #%checkm_0.7
+
+   It is highly recommended that the first line of a Checkm manifest be
+   of the form
+
+   #%checkm_M.N
+
+   where M.N identify major and minor version numbers. The current
+   version is 0.7.
+
+5.2.  Optional extension: #%eof
+
+   A line consisting of
+
+   #%eof
+
+   is reserved as an explicit end of manifest file marker. It can be
+   used to distinguish manifests that might be empty because of an error
+   from those that are deliberately empty.
+
+5.3.  Optional extension: #%fields
+
+   To precisely identify all fields in a given Checkm manifest, before
+   any non-comment lines include a line of the form
+
+   #%fields | Field_Id | ...
+
+   containing one or more instances of a Field_Id, each identifying the
+   corresponding manifest field. A Field_Id may be a simple string
+   suggestive of the respective field's function or it may be a globally
+   unique URL. If a Field_Id URL is resolvable, it should document any
+   restriction or extension in effect. The #%fields structured comment
+   may form part of a #%profile definition.
+
+   Semantics of the basic fields 1 through 6 may not be altered except
+   to narrow their meanings, such as to restrict the values of field 3
+   to one particular algorithm. Semantics of the extension fields (7 and
+   higher) may be defined at will.
+
+
+5.4.  Optional extension: #%prefix
+
+   To define an abbeviation for a long URL in a manner reminiscent of
+   Turtle [Turtle], before any use of the abbreviation include a line of
+   the form
+
+   #%prefix | Abbrev: | URL
+
+   where Abbrev (which may be empty) is a "prefix" that will stand in
+   for the given URL when it used in other structured comments (and not
+   in non-comment lines). The #%prefix structured comment may form part
+   of a #%profile definition.
+
+5.5.  Optional extension: #%profile
+
+   To declare that a Checkm manifest conforms to a specific profile,
+   before any non-comment lines include a line of the form
+
+   #%profile | ProfileURL
+
+   where ProfileURL is a unique identifier for a specific profile. If
+   the URL is resolvable, it should document any restrictions and
+   extensions. Some example profiles appear in an appendix.
+
+
+6.  Conformance Terminology
+
+   A tool that uses the Checkm format should document which parts of the
+   format it supports. For example, documentation should state what
+   extensions, if any, are in use. One common restriction could be
+   expressed something like,
+
+      "... which must be a single-level, 3-column Checkm manifest with
+      relative filenames."
+
+   This terminology suggests that, for this particular tool, an
+   exception or undefined behavior is the likely result of supplying a
+   Checkm manifest that has any line beginning with '@', a URL, or an
+   absolute pathname, or that has any line with more than or fewer than
+   3 tokens.
+
+
+7.  Example two-level Checkm manifest
+
+   #%checkm_0.7
+   # A two-level manifest.
+   
+   #Filename|Alg |Checksum                                  |Length
+   foo.bar     |sha1|2eacd0da7aa89b094f5121eb2901bf4de2219ef1  | 366
+   foo.bar     |md5 |3e83471320227c0797a0c251f28db0c5          | 366
+   # This next line "includes" the manifest in file "myfirst".
+   @myfirst   |md5 |6ab96c8930621d50cef31da4df6d9ed8          | 264
+
+   where the included file "myfirst" contains 264 octets and lists two
+   files:
+
+   #%checkm_0.7
+   # My first manifest.  Two files total.
+   # Filename                 |Algorithm|  Digest
+   book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9
+   images/r862.png   |   md5   |  408ad21d50cef31da4df6d9ed81b01a7
+
+8.  References
+
+   [FIPS180-2]
+              NIST, "FIPS 180-2: Secure Hash Standard (SHS)",
+              February 2004, <http://csrc.nist.gov/publications/fips/
+              fips180-2/fips180-2withchangenotice.pdf>.
+
+   [OAI]      Lagoze, C. and H. Van de Sompel, "Open Archives Initiative
+              Protocol for Metadata Harvesting", June 2002, <http://
+              www.openarchives.org/OAI/openarchivesprotocol.html>.
+
+   [RFC1321]  Rivest, R., "The MD5 Message-Digest Algorithm", RFC 1321,
+              April 1992.
+
+   [RFC3174]  Eastlake, D. and P. Jones, "US Secure Hash Algorithm 1
+              (SHA1)", RFC 3174, September 2001.
+
+   [RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO
+              10646", STD 63, RFC 3629, November 2003.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, January 2005.
+
+   [SITEMAPS]
+              sitemaps.org, "Sitemaps XML format", February 2008,
+              <http://sitemaps.org/protocol.php>.
+
+   [TEMPER]   Blair, C. and J. Kunze, "Temporal Enumerated Ranges",
+              August 2007,
+              <http://www.cdlib.org/inside/diglib/ark/temperspec.pdf>.
+
+   [Turtle]   Beckett, D. and T. Berners-Lee, "Turtle - Terse RDF Triple
+              Language", January 2008,
+              <http://www.w3.org/TeamSubmission/turtle/>.
+
+   [W3CDTF]   Wolf, M. and C. Wicksteed, "Date and Time Formats (W3C
+              profile of ISO8601)",
+              <http://www.w3.org/TR/NOTE-datetime>.
+
+
+Appendix A.  Example profiles
+
+   The most important attribute of a Checkm profile is a globally unique
+   identifier, such as,
+
+   http://merritt.cdlib.org/registry/mrt-ingest-manifest
+
+   which applications can use for conditional processing.  If, in
+   addition, this identifier is resolvable, it should return a text file
+   with the same format as a Checkm manifest but with no non-comment
+   lines.  This file formally documents any particular ways in which the
+   first six Checkm fields may be restricted and what any additional
+   fields mean.  As an example, the profile URL above corresponds to
+
+   #%checkm_0.7
+   #
+   # This is a profile definition for a "Merritt ingest" manifest.
+   #
+   #%profile | http://merritt.cdlib.org/registry/mrt-ingest-manifest
+   #%prefix  | mrt: | http://merritt.cdlib.org/terms#
+   #%prefix  | nfo: |
+               http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#
+   #%fields  | nfo:fileUrl  | nfo:hashAlgorithm    | nfo:hashValue |
+               nfo:fileSize | nfo:fileLastModified | nfo:fileName  |
+               mrt:mimeType
+
+   In this example and the next, indented lines artificially occur where
+   long lines have been wrapped for display purposes.  The profile below
+   uses Checkm inclusion lines as a way to describe "digital objects".
+
+   #%checkm_0.7
+   #
+   # This is a profile definition for a "Merritt batch" manifest.
+   # It is meant to be used with Checkm "inclusion" lines, as in
+   #
+   #   @url | [alg] | [value] | [length] | | filename | [primary] [ | local ]
+   #
+   #%profile | http://merritt.cdlib.org/registry/mrt-batch-manifest
+   #%prefix  | mrt: | http://merritt.cdlib.org/terms#
+   #%prefix  | nfo: |
+               http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#
+   #%fields  | nfo:fileUrl  | nfo:hashAlgorithm    | nfo:hashValue |
+               nfo:fileSize | nfo:fileLastModified | nfo:fileName  |
+               mrt:primaryIdentifier | mrt:localIdentifier
+
+
+Authors' Addresses
+
+   John A. Kunze
+   California Digital Library
+   415 20th St, 4th Floor
+   Oakland, CA  94612
+   US
+
+   Email: jak@ucop.edu
+
+   Stephen Abrams
+   California Digital Library
+   415 20th St, 4th Floor
+   Oakland, CA  94612
+   US
+
+   Email: stephen.abrams@ucop.edu
+
+   David Loy
+   California Digital Library
+   415 20th St, 4th Floor
+   Oakland, CA  94612
+   US
+
+   Email: david.loy@ucop.edu

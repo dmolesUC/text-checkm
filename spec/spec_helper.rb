@@ -1,2 +1,2 @@
-require "rspec"
-require "checkm"
+require 'rspec'
+require 'checkm'
