@@ -50,8 +50,12 @@ module Text
       end
 
       it 'should support custom field names' do
-        checkm = '#%fields | testa | test b' + "\n" \
-              'book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9'
+        checkm = <<~CHECKM
+          #%fields | testa | test b
+          book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9
+        CHECKM
+        checkm.strip!
+
         res = Manifest.parse(checkm)
 
         line = res.entries.first
@@ -94,11 +98,6 @@ module Text
       end
 
       describe 'manipulate manifest' do
-        it 'should support simple create' do
-          res = Entry.create('LICENSE.md')
-          expect(res).to match(/LICENSE\.md | md5 | a02e647a5dcd1fe38abf74f9f0d44dae | 1149 | \d{4}/)
-        end
-
         it 'should allow files to be added to an existing manifest' do
           m = Manifest.parse('')
           res = m.add('LICENSE.md')

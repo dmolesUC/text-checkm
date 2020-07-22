@@ -9,7 +9,7 @@ module Text
       BASE_FIELDS = %w[sourcefileorurl alg digest length modtime targetfileorurl].freeze
       attr_reader :values
 
-      def self.create(path, args = {})
+      def self.create(path, args = {}) # TODO: why is this in this class?
         base = args[:base] || Dir.pwd
         alg = args[:alg] || 'md5'
         file = File.new File.join(base, path)
@@ -33,7 +33,6 @@ module Text
       rescue StandardError
         nil
       end
-
       # rubocop:enable Style/MethodMissingSuper
 
       def respond_to_missing?(sym, *)

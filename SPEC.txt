@@ -193,7 +193,7 @@ Abstract
 
    #%checkm_0.7
    # My fourth manifest.  Two files and a directory.
-   # Filename                 |Algorithm|  Digest
+   # Filename        |Algorithm|  Digest
    book/Chapter9.xml |   md5   |  49afbd86a1ca9f34b677a3f09655eae9
    icons/            |   dir
    images/r862.png   |   md5   |  408ad21d50cef31da4df6d9ed81b01a7
