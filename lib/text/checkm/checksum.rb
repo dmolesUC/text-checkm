@@ -9,7 +9,7 @@ module Text
       # Compute the checksum 'alg' for a file
       # @param [File] file
       # @param [String] alg md5, sha1, sha256, dir
-      def checksum(file, alg)
+      def checksum(file, alg) # TODO: don't pass file handles around
         return true unless alg # TODO: something less counterintuitive
         return File.directory?(file) if alg =~ /dir/
 
