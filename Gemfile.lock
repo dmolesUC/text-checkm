@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rcheckm (0.0.1)
+    checkm (0.7)
 
 GEM
   remote: http://rubygems.org/
@@ -83,12 +83,12 @@ PLATFORMS
 
 DEPENDENCIES
   bundle-audit
+  checkm!
   ci_reporter_rspec
   colorize
   irb
   listen (>= 3.0.5, < 3.2)
   rake (>= 13.0)
-  rcheckm!
   rspec-support
   rubocop (= 0.86)
   simplecov (~> 0.16.1)

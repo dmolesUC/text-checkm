@@ -1,12 +1,12 @@
 Gem::Specification.new do |spec|
-  spec.name = 'rcheckm'
-  spec.version = '0.0.1'
+  spec.name = 'checkm'
+  spec.version = File.read('VERSION').strip
   spec.authors = ['David Moles']
   spec.email = ['dmoles@berkeley.edu']
   spec.summary = 'Ruby implementation of the Checkm manifest format'
   spec.description = 'A Ruby implementation of the Checkm checksum-based manifest format'
   spec.license = 'MIT'
-  spec.homepage = 'https://github.com/dmolesUC/rcheckm'
+  spec.homepage = 'https://github.com/dmolesUC/checkm'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
