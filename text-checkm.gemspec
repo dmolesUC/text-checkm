@@ -1,12 +1,14 @@
+require_relative 'lib/text/checkm/module_info'
+
 Gem::Specification.new do |spec|
-  spec.name = 'checkm'
-  spec.version = File.read('VERSION').strip
-  spec.authors = ['David Moles']
-  spec.email = ['dmoles@berkeley.edu']
-  spec.summary = 'Ruby implementation of the Checkm manifest format'
-  spec.description = 'A Ruby implementation of the Checkm checksum-based manifest format'
-  spec.license = 'MIT'
-  spec.homepage = 'https://github.com/dmolesUC/checkm'
+  spec.name = Text::Checkm::ModuleInfo::NAME
+  spec.author = Text::Checkm::ModuleInfo::AUTHOR
+  spec.email = Text::Checkm::ModuleInfo::AUTHOR_EMAIL
+  spec.summary = Text::Checkm::ModuleInfo::SUMMARY
+  spec.description = Text::Checkm::ModuleInfo::DESCRIPTION
+  spec.license = Text::Checkm::ModuleInfo::LICENSE
+  spec.version = Text::Checkm::ModuleInfo::VERSION
+  spec.homepage = Text::Checkm::ModuleInfo::HOMEPAGE
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }

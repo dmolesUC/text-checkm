@@ -1,3 +1,5 @@
+require 'text/checkm/entry'
+
 module Text
   module Checkm
     class Manifest
@@ -36,13 +38,13 @@ module Text
       end
 
       def add(path, args = {})
-        line = Checkm::Entry.create path, args
+        line = Entry.create path, args
 
-        Checkm::Manifest.new [@lines, line].flatten.join("\n"), @args
+        Manifest.new [@lines, line].flatten.join("\n"), @args
       end
 
       def remove(path)
-        Checkm::Manifest.new @lines.reject { |x| x =~ /^@?#{path}/ }.join("\n"), @args
+        Manifest.new @lines.reject { |x| x =~ /^@?#{path}/ }.join("\n"), @args
       end
 
       def to_s

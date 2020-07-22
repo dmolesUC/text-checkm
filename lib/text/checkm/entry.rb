@@ -1,5 +1,8 @@
 require 'open-uri'
 require 'time'
+
+require 'text/checkm/checksum'
+
 module Text
   module Checkm
     class Entry
