@@ -39,6 +39,14 @@ module Text
           end
         end
       end
+
+      describe :valid do
+        it 'handles multi-level manifests' do
+          manifest = Manifest.parse(File.read('spec/data/two-level-manifest.checkm'), path: 'spec/data')
+          entry = manifest.entries[2]
+          expect(entry.valid?).to be_truthy # TODO: something less hacky
+        end
+      end
     end
   end
 end

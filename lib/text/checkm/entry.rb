@@ -30,8 +30,6 @@ module Text
       def method_missing(sym, *_args)
         # TODO: something less extreme
         @values[@fields.index(sym.to_s.downcase) || BASE_FIELDS.index(sym.to_s.downcase)]
-      rescue StandardError
-        nil
       end
       # rubocop:enable Style/MethodMissingSuper
 
@@ -61,18 +59,18 @@ module Text
         [true, digest].include?(checksum) # TODO: something less counterintuitive
       end
 
-      def valid_length?
-        throw NotImplementedError
-      end
-
-      def valid_modtime?
-        throw NotImplementedError
-      end
+      # def valid_length?
+      #   throw NotImplementedError
+      # end
+      #
+      # def valid_modtime?
+      #   throw NotImplementedError
+      # end
 
       def valid_multilevel?
         return true unless sourcefileorurl =~ /^@/
 
-        Manifest.parse(URI.open(source).read, File.dirname(source))
+        Manifest.parse(URI.open(source).read, path: File.dirname(source))
       end
     end
   end

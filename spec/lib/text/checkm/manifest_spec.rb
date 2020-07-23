@@ -119,7 +119,7 @@ module Text
         entries = m.entries
         expect(entries.size).to eq(3)
         entry = entries[2]
-        expect(entry.sourcefileorurl).to eq('@myfirst') # TODO: is this right?
+        expect(entry.sourcefileorurl).to eq('@myfirst.checkm')
       end
 
       describe :remove do
@@ -133,7 +133,7 @@ module Text
 
         it 'removes entries by name' do
           expect(modified.entries.size).to eq(1)
-          expect(modified.entries[0].sourcefileorurl).to eq('@myfirst')
+          expect(modified.entries[0].sourcefileorurl).to eq('@myfirst.checkm')
         end
 
         it 'does not modify the original' do
