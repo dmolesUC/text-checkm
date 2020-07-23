@@ -113,6 +113,35 @@ module Text
         expect(lines[0]).to eq('#%checkm_0.7')
         expect(lines[1]).to match(/^LICENSE\.md/)
       end
+
+      it 'parses a two-level manifest' do
+        m = Manifest.parse(File.read('spec/data/two-level-manifest.checkm'))
+        entries = m.entries
+        expect(entries.size).to eq(3)
+        entry = entries[2]
+        expect(entry.sourcefileorurl).to eq('@myfirst') # TODO: is this right?
+      end
+
+      describe :remove do
+        attr_reader :original
+        attr_reader :modified
+
+        before(:each) do
+          @original = Manifest.parse(File.read('spec/data/two-level-manifest.checkm'))
+          @modified = original.remove('foo.bar')
+        end
+
+        it 'removes entries by name' do
+          expect(modified.entries.size).to eq(1)
+          expect(modified.entries[0].sourcefileorurl).to eq('@myfirst')
+        end
+
+        it 'does not modify the original' do
+          expect(original.entries.size).to eq(3)
+          expect(original.entries[0].sourcefileorurl).to eq('foo.bar')
+          expect(original.entries[1].sourcefileorurl).to eq('foo.bar')
+        end
+      end
     end
   end
 end

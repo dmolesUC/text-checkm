@@ -1,0 +1,8 @@
+#%checkm_0.7
+# A two-level manifest.
+
+#Filename|Alg |Checksum                                  |Length
+foo.bar     |sha1|2eacd0da7aa89b094f5121eb2901bf4de2219ef1  | 366
+foo.bar     |md5 |3e83471320227c0797a0c251f28db0c5          | 366
+# This next line "includes" the manifest in file "myfirst".
+@myfirst    |md5 |6ab96c8930621d50cef31da4df6d9ed8          | 264
