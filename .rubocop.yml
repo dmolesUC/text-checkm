@@ -5,6 +5,7 @@ AllCops:
     - 'db/**/*'
     - 'out/**/*'
     - 'node_modules/**/*'
+    - 'vendor/**/*'
 
 # Added in RuboCop 0.83
 Layout/EmptyLinesAroundAttributeAccessor:
