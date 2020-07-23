@@ -142,6 +142,16 @@ module Text
           expect(original.entries[1].sourcefileorurl).to eq('foo.bar')
         end
       end
+
+      describe :to_h do
+        it 'returns a hash of entries by source' do
+          manifest = Manifest.parse(File.read('spec/data/two-level-manifest.checkm'))
+          h = manifest.to_h
+          manifest.entries.each do |e|
+            expect(h[e.sourcefileorurl]).to include(e)
+          end
+        end
+      end
     end
   end
 end

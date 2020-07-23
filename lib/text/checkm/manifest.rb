@@ -21,7 +21,7 @@ module Text
         @entries = []
         @eof = false
         @fields = nil
-        @path = args[:path]
+        @path = args[:path] # TODO: something less hacky
         @path ||= Dir.pwd
 
         parse_lines
@@ -51,8 +51,13 @@ module Text
         @lines.join("\n")
       end
 
-      def to_hash
-        Hash[*@entries.map { |x| [x.sourcefileorurl, x] }.flatten]
+      def to_h
+        {}.tap do |h|
+          entries.each do |e|
+            source = e.sourcefileorurl
+            (h[source] ||= []) << e
+          end
+        end
       end
 
       private
