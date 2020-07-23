@@ -1,5 +1,8 @@
 # Text::Checkm
 
+[![Build Status](https://travis-ci.org/dmolesUC/text-checkm.svg?branch=master)](https://travis-ci.org/dmolesUC/text-checkm)
+[![Gem Version](https://img.shields.io/gem/v/text-checkm.svg)](https://github.com/dmolesUC/text-checkm/releases)
+
 Ruby implementation of
 [Checkm](https://confluence.ucop.edu/display/Curation/Checkm), a
 general-purpose text-based file manifest format developed at the
