@@ -4,7 +4,7 @@ PATH
     text-checkm (0.7)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     ast (2.4.1)
     builder (3.2.4)
