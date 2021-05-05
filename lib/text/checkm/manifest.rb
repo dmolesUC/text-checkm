@@ -7,10 +7,7 @@ module Text
         Manifest.new str, args
       end
 
-      attr_reader :version
-      attr_reader :entries
-      attr_reader :fields
-      attr_reader :path
+      attr_reader :version, :entries, :fields, :path
 
       # rubocop:disable Metrics/MethodLength
       def initialize(checkm, args = {})
@@ -66,23 +63,22 @@ module Text
       def parse_lines
         @lines.each do |line|
           case line
+          when /^$/
+            # do nothing
           when /^#%/
             parse_header line
           when /^#/
             parse_comment line
-          when /^$/
-            # do nothing
-          when /^@/
-            parse_line line
+          # when /^@/
+          #   parse_line line
           else
             parse_line line
           end
         end
       end
-
       # rubocop:enable Metrics/MethodLength
 
-      # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength
       def parse_header(line)
         case line
         when /^#%checkm/
@@ -94,14 +90,11 @@ module Text
           list = line.split('|')
           list.shift
           @fields = list.map { |v| v.strip.downcase }
-        when /^#%prefix/
-          # do nothing
-        when /^#%profile/
+        when /^#%prefix/, /^#%profile/
           # do nothing
         end
       end
-
-      # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength
 
       def parse_comment(_line)
         # do nothing

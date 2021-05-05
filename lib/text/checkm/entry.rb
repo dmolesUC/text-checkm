@@ -26,12 +26,10 @@ module Text
         @manifest = manifest
       end
 
-      # rubocop:disable Style/MethodMissingSuper
       def method_missing(sym, *_args)
         # TODO: something less extreme
         @values[@fields.index(sym.to_s.downcase) || BASE_FIELDS.index(sym.to_s.downcase)]
       end
-      # rubocop:enable Style/MethodMissingSuper
 
       def respond_to_missing?(sym, *)
         @fields.include?(sym.to_s.downcase) || BASE_FIELDS.include?(sym.to_s.downcase)
@@ -70,7 +68,7 @@ module Text
       def valid_multilevel?
         return true unless sourcefileorurl =~ /^@/
 
-        Manifest.parse(URI.open(source).read, path: File.dirname(source))
+        Manifest.parse(File.read(source), path: File.dirname(source))
       end
     end
   end

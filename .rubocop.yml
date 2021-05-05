@@ -7,10 +7,6 @@ AllCops:
     - 'node_modules/**/*'
     - 'vendor/**/*'
 
-# Added in RuboCop 0.83
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: true
-
 # Allow one line around block body (Layout/EmptyLines will still disallow two or more)
 Layout/EmptyLinesAroundBlockBody:
   Enabled: false
@@ -34,26 +30,6 @@ Layout/MultilineMethodCallIndentation:
 # Produces monsters
 Layout/MultilineOperationIndentation:
   Enabled: false
-
-# Added in RuboCop 0.84
-Lint/DeprecatedOpenSSLConstant:
-  Enabled: true
-
-# Added in RuboCop 0.81
-Lint/RaiseException:
-  Enabled: true
-
-# Added in RuboCop 0.85
-Lint/MixedRegexpCaptureTypes:
-  Enabled: true
-
-# Added in RuboCop 0.82
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-
-# Added in RuboCop 0.81
-Lint/StructNewOverride:
-  Enabled: true
 
 # We meant to do that
 Naming/MemoizedInstanceVariableName:
@@ -83,10 +59,6 @@ Style/CommentedKeyword:
 Style/Documentation:
   Enabled: false
 
-# Added in RuboCop 0.82
-Style/ExponentialNotation:
-  Enabled: false
-
 # Adding more line noise to format strings will not improve them
 Style/FormatStringToken:
   Enabled: false
@@ -95,18 +67,6 @@ Style/FormatStringToken:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-# Added in RuboCop 0.80
-Style/HashEachMethods:
-  Enabled: true
-
-# Added in RuboCop 0.80
-Style/HashTransformKeys:
-  Enabled: true
-
-# Added in RuboCop 0.80
-Style/HashTransformValues:
-  Enabled: true
-
 # Requiring the lambda() method just makes wordy calls wordier
 Style/Lambda:
   EnforcedStyle: literal
@@ -114,18 +74,6 @@ Style/Lambda:
 # `foo.positive?` is cute, but it's not actually more readable than `foo > 0`
 Style/NumericPredicate:
   Enabled: false
-
-# Added in RuboCop 0.86
-Style/RedundantFetchBlock:
-  Enabled: true
-
-# Added in RuboCop 0.85
-Style/RedundantRegexpCharacterClass:
-  Enabled: true
-
-# Added in RuboCop 0.85
-Style/RedundantRegexpEscape:
-  Enabled: true
 
 # Don't be unnecessarily redundant
 Style/ReturnNil:
@@ -136,10 +84,98 @@ Style/ReturnNil:
 Style/SingleLineBlockParams:
   Enabled: false
 
-# Added in RuboCop 0.83
-Style/SlicingWithRange:
-  Enabled: true
-
 # The semantics of `foo&.bar` are a lot less interchangeable with `foo && foo.bar` than RuboCop thinks
 Style/SafeNavigation:
   Enabled: false
+
+############################################################
+
+Gemspec/DateAssignment: # (new in 1.10)
+  Enabled: true
+Layout/EmptyLinesAroundAttributeAccessor: # (new in 0.83)
+    Enabled: true
+Layout/SpaceAroundMethodCallOperator: # (new in 0.82)
+    Enabled: true
+Layout/SpaceBeforeBrackets: # (new in 1.7)
+  Enabled: true
+Lint/AmbiguousAssignment: # (new in 1.7)
+  Enabled: true
+Lint/DeprecatedConstants: # (new in 1.8)
+  Enabled: true
+Lint/DeprecatedOpenSSLConstant: # (new in 0.84)
+    Enabled: true
+Lint/DuplicateBranch: # (new in 1.3)
+  Enabled: true
+Lint/DuplicateRegexpCharacterClassElement: # (new in 1.1)
+  Enabled: true
+Lint/EmptyBlock: # (new in 1.1)
+  Enabled: true
+Lint/EmptyClass: # (new in 1.3)
+  Enabled: true
+Lint/LambdaWithoutLiteralBlock: # (new in 1.8)
+  Enabled: true
+Lint/MixedRegexpCaptureTypes: # (new in 0.85)
+    Enabled: true
+Lint/NoReturnInBeginEndBlocks: # (new in 1.2)
+  Enabled: true
+Lint/NumberedParameterAssignment: # (new in 1.9)
+  Enabled: true
+Lint/OrAssignmentToConstant: # (new in 1.9)
+  Enabled: true
+Lint/RaiseException: # (new in 0.81)
+    Enabled: true
+Lint/RedundantDirGlobSort: # (new in 1.8)
+  Enabled: true
+Lint/StructNewOverride: # (new in 0.81)
+    Enabled: true
+Lint/SymbolConversion: # (new in 1.9)
+  Enabled: true
+Lint/ToEnumArguments: # (new in 1.1)
+  Enabled: true
+Lint/TripleQuotes: # (new in 1.9)
+  Enabled: true
+Lint/UnexpectedBlockArity: # (new in 1.5)
+  Enabled: true
+Lint/UnmodifiedReduceAccumulator: # (new in 1.1)
+  Enabled: true
+Style/ArgumentsForwarding: # (new in 1.1)
+  Enabled: true
+Style/CollectionCompact: # (new in 1.2)
+  Enabled: true
+Style/DocumentDynamicEvalDefinition: # (new in 1.1)
+  Enabled: true
+Style/EndlessMethod: # (new in 1.8)
+  Enabled: true
+Style/ExponentialNotation: # (new in 0.82)
+    Enabled: false
+Style/HashConversion: # (new in 1.10)
+  Enabled: true
+Style/HashEachMethods: # (new in 0.80)
+    Enabled: true
+Style/HashExcept: # (new in 1.7)
+  Enabled: true
+Style/HashTransformKeys: # (new in 0.80)
+    Enabled: true
+Style/HashTransformValues: # (new in 0.80)
+    Enabled: true
+Style/IfWithBooleanLiteralBranches: # (new in 1.9)
+  Enabled: true
+Style/NegatedIfElseCondition: # (new in 1.2)
+  Enabled: true
+Style/NilLambda: # (new in 1.3)
+  Enabled: true
+Style/RedundantArgument: # (new in 1.4)
+  Enabled: true
+Style/RedundantFetchBlock: # (new in 0.86)
+    Enabled: true
+Style/RedundantRegexpCharacterClass: # (new in 0.85)
+    Enabled: true
+Style/RedundantRegexpEscape: # (new in 0.85)
+    Enabled: true
+Style/SlicingWithRange: # (new in 0.83)
+    Enabled: true
+Style/StringChars: # (new in 1.12)
+  Enabled: true
+Style/SwapValues: # (new in 1.1)
+  Enabled: true
+
