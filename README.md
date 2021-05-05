@@ -13,14 +13,10 @@ Abrams, and David Loy.
 
 ## Copyright
 
-Based on [checkm](https://github.com/ruby-microservices/checkm/), copyright
-© 2010 Chris Beer. (For compliance with [UC policies on the use and
-creation of open source
-software](https://security.ucop.edu/resources/open-source-software-licensing.html),
-this library is based on
-[ruby-microservices/checkm@b7a23d6](https://github.com/ruby-microservices/checkm/tree/b7a23d6a72af643cb9554bf16ff49fc27eded827),
+Based on [checkm](https://github.com/ruby-microservices/checkm/), © 2010 Chris Beer.
+(For compliance with [UC policies on the use and creation of open source software](https://security.ucop.edu/resources/open-source-software-licensing.html),
+this library is based on [ruby-microservices/checkm@b7a23d6](https://github.com/ruby-microservices/checkm/tree/b7a23d6a72af643cb9554bf16ff49fc27eded827),
 the last MIT-licensed revision.)
 
-Subsequent work © 2020 the Regents of the University of California. See
+Subsequent work © 2021 the Regents of the University of California. See
 [LICENSE.md](LICENSE.md) for more details.
-
