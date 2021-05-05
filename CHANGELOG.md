@@ -1,3 +1,8 @@
+# 0.8 (5 May 2021)
+
+- don't check in `Gemfile.lock`
+- set `required_ruby_version` to >= 2.7 in gemspec
+
 # 0.7 (22 July 2020)
 
 - fork from [ruby-microservices/checkm@b7a23d6](https://github.com/ruby-microservices/checkm/tree/b7a23d6a72af643cb9554bf16ff49fc27eded827)
